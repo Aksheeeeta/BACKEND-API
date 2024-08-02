@@ -1,0 +1,70 @@
+from flask import Flask, request, jsonify
+
+app = Flask(__name__)
+
+# Sample operation code for GET request
+OPERATION_CODE = "OP123456"
+
+@app.route('/api/endpoint', methods=['POST'])
+def process_post_request():
+    data = request.get_json()
+
+    # Extract data from the JSON request
+    user_id = data.get('user_id')
+    college_email = data.get('college_email')
+    college_roll_number = data.get('college_roll_number')
+    array_for_numbers = data.get('array_for_numbers')
+    array_for_alphabets = data.get('array_for_alphabets')
+
+    # Validate that the required fields are present
+    if not all([user_id, college_email, college_roll_number, array_for_numbers, array_for_alphabets]):
+        return jsonify({"status": "error", "message": "Missing required fields"}), 400
+
+    response = {
+        "status": "success",
+        "user_id": user_id,
+        "college_email": college_email,
+        "college_roll_number": college_roll_number,
+        "array_for_numbers": array_for_numbers,
+        "array_for_alphabets": array_for_alphabets
+    }
+
+    return jsonify(response), 200
+
+@app.route('/api/endpoint', methods=['GET'])
+def process_get_request():
+    return jsonify({"operation_code": OPERATION_CODE}), 200
+
+if __name__ == '__main__':
+    app.run(debug=True)
+python app.py
+curl -X POST http://127.0.0.1:5000/api/endpoint -H "Content-Type: application/json" -d '{
+    "user_id": "12345",
+    "college_email": "student@college.edu",
+    "college_roll_number": "20201234",
+    "array_for_numbers": [1, 2, 3, 4],
+    "array_for_alphabets": ["A", "B", "C"]
+}'
+{
+    "status": "success",
+    "user_id": "12345",
+    "college_email": "student@college.edu",
+    "college_roll_number": "20201234",
+    "array_for_numbers": [1, 2, 3, 4],
+    "array_for_alphabets": ["A", "B", "C"]
+}
+curl http://127.0.0.1:5000/api/endpoint
+{
+    "operation_code": "OP123456"
+}
+curl https://cli-assets.heroku.com/install.sh | sh
+heroku login
+pip freeze > requirements.txt
+web: python app.py
+git init
+git add .
+git commit -m "Initial commit"
+heroku create
+git push heroku master
+heroku open
+
