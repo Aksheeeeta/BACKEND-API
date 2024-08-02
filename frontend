@@ -1,0 +1,115 @@
+npx create-react-app frontend-app
+cd frontend-app
+npm install axios
+import React, { useState } from 'react';
+import axios from 'axios';
+import Select from 'react-select';
+
+const App = () => {
+  const [jsonInput, setJsonInput] = useState('');
+  const [jsonError, setJsonError] = useState('');
+  const [apiResponse, setApiResponse] = useState(null);
+  const [selectedOptions, setSelectedOptions] = useState([]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setJsonError('');
+    setApiResponse(null);
+
+    try {
+      const parsedJson = JSON.parse(jsonInput);
+      const response = await axios.post('http://127.0.0.1:5000/api/endpoint', parsedJson);
+      setApiResponse(response.data);
+    } catch (error) {
+      setJsonError('Invalid JSON format');
+    }
+  };
+
+  const handleDropdownChange = (selected) => {
+    setSelectedOptions(selected);
+  };
+
+  const renderResponse = () => {
+    if (!apiResponse) return null;
+    const selectedValues = selectedOptions.map(option => option.value);
+
+    return (
+      <div>
+        {selectedValues.includes('alphabets') && (
+          <div>
+            <h3>Alphabets:</h3>
+            <p>{apiResponse.array_for_alphabets.join(', ')}</p>
+          </div>
+        )}
+        {selectedValues.includes('numbers') && (
+          <div>
+            <h3>Numbers:</h3>
+            <p>{apiResponse.array_for_numbers.join(', ')}</p>
+          </div>
+        )}
+        {selectedValues.includes('highest_alphabet') && (
+          <div>
+            <h3>Highest Alphabet:</h3>
+            <p>{Math.max(...apiResponse.array_for_alphabets.map(letter => letter.charCodeAt(0)))}</p>
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  const options = [
+    { value: 'alphabets', label: 'Alphabets' },
+    { value: 'numbers', label: 'Numbers' },
+    { value: 'highest_alphabet', label: 'Highest Alphabet' }
+  ];
+
+  return (
+    <div>
+      <h1>20201234</h1>
+      <form onSubmit={handleSubmit}>
+        <textarea
+          value={jsonInput}
+          onChange={(e) => setJsonInput(e.target.value)}
+          rows="5"
+          cols="50"
+        />
+        <br />
+        <button type="submit">Submit</button>
+      </form>
+      {jsonError && <p style={{ color: 'red' }}>{jsonError}</p>}
+      {apiResponse && (
+        <div>
+          <Select
+            isMulti
+            name="options"
+            options={options}
+            className="basic-multi-select"
+            classNamePrefix="select"
+            onChange={handleDropdownChange}
+          />
+          {renderResponse()}
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default App;
+{
+  "user_id": "12345",
+  "college_email": "student@college.edu",
+  "college_roll_number": "20201234",
+  "array_for_numbers": [1, 2, 3, 4],
+  "array_for_alphabets": ["A", "B", "C"]
+}
+{
+  "status": "success",
+  "user_id": "12345",
+  "college_email": "student@college.edu",
+  "college_roll_number": "20201234",
+  "array_for_numbers": [1, 2, 3, 4],
+  "array_for_alphabets": ["A", "B", "C"]
+}
+
+  const handleDropdownChange = (selected) => {
+    setSelectedOptions(selected);
